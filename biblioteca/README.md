@@ -1,7 +1,8 @@
-# AMPLIACIÓN DE BASES DE DATOS
-## Diseño avanzado de bases de datos relacionales
+# AMPLIACIÓN DE BASES DE DATOS #
 
-## PRÁCTICAS 1 Y 2
+## Diseño avanzado de bases de datos relacionales
+
+### PRÁCTICAS 1 Y 2
 
 Crea la base de datos biblioteca y determina las tablas más adecuadas para representar la información.
 
