@@ -1,0 +1,82 @@
+
+% Hechos
+
+hombre(abraham).
+hombre(clancy).
+hombre(herbert).
+hombre(homer).
+hombre(bart).
+
+mujer(mona).
+mujer(jackie).
+mujer(marge).
+mujer(patty).
+mujer(selma).
+mujer(lisa).
+mujer(maggie).
+mujer(ling).
+
+progenitor(abraham, herbert).
+progenitor(abraham, homer).
+progenitor(mona, homer).
+progenitor(clancy, marge).
+progenitor(jackie, marge).
+progenitor(clancy, patty).
+progenitor(jackie, patty).
+progenitor(clancy, selma).
+progenitor(jackie, selma).
+progenitor(homer, bart).
+progenitor(marge, bart).
+progenitor(homer, lisa).
+progenitor(marge, lisa).
+progenitor(homer, maggie).
+progenitor(marge, maggie).
+progenitor(selma, ling).
+
+% Reglas no recursivas:
+
+% Relación de paternidad:
+padre(X, Y) :- progenitor(X, Y), hombre(X).
+madre(X, Y) :- progenitor(X, Y), mujer(X).
+
+% Relación de hermandad:
+hermanos(X, Y) :- progenitor(Z, X), progenitor(Z, Y), X \= Y.
+
+/*
+Una regla funciona basándose en la lógica proposicional, es decir, si se cumplen las condiciones
+del cuerpo de la regla, entonces la cabeza también se cumple y por lo tanto, la consulta la
+devuelve como cierta.
+
+En el ejemplo anterior, la relación hermanos(X,Y) sólo se muestra una vez para aquellas personas
+que son hermanos y comparten mismo padre y misma madre. En un primer momento podemos pensar que la
+consulta debería devolver hermanos(bart, lisa) por ejemplo dos veces, ya que tienen como progenitor
+compartido a Homer y a Marge. Sin embargo, la consulta hermanos(bart, lisa) es TRUE en cuanto hay
+al menos una combinación verdadera, por lo que devuelve directamente TRUE sin necesidad de que
+compartan ambos progenitores. Si quisieramos incluir esa condición, deberíamos añadir a la consulta
+que padre(X) = padre(Y), y que madre(X) = madre(Y).
+
+También hay que tener en cuenta que la consulta hermanos(bart, lisa) se ejecuta una única vez, y
+comprueba si es verdadera para al menos una combinación de progenitor, pero tomando todos los
+valores posibles de progenitor. Como es cierta para Homer y para Marge pero la consulta hermanos
+como tal con los valores Bart y Lisa sólo se ejecuta una vez, nos devolverá TRUE sólo una vez aunque
+dicha consulta sea cierta para dos valores de progenitor distintos.
+*/
+
+% Reglas recursivas:
+
+% Relación de antecesor:
+antecesor(X, Y) :- progenitor(X, Y).
+antecesor(X, Y) :- progenitor(X, Z), antecesor(Z, Y).
+
+% Relación de coetáneos:
+mg(X, Y) :- hermanos(X, Y).
+mg(X, Y) :- progenitor(Z, X), progenitor(V, Y), mg(Z, V).
+
+/*
+Es muy importante que las reglas recursvias estén formadas por dos enunciados distintos pero con
+el mismo nombre: uno que sea el caso base, y otro que sea el caso recursivo.
+
+Ambas declaraciones deben llamarse igual, incluidas sus variables, y el programa intentará ejecutar
+primero el caso base, y en caso de devolver FALSE, entonces ejecuta el caso recursivo hasta llegar
+a un caso que cumpla el caso base y devuelva TRUE, y de ahí iría subiendo en la recursión.
+*/

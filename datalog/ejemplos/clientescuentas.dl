@@ -1,0 +1,157 @@
+
+% Hechos
+
+cliente(1, 'Javier', 'Herranz').
+cliente(2, 'Ana', 'Martin').
+cliente(3, 'Gerardo', 'de la Iglesia').
+cliente(4, 'Manuel', 'Moreno').
+cliente(5, 'Lucia', 'Rodriguez').
+cliente(6, 'Raquel', 'Velasco').
+cliente(7, 'Ignacio', 'Martin').
+
+cuenta(1, nomina, 12000, 1).
+cuenta(2, ahorro, 15000, 1).
+cuenta(3, nomina, 21500, 2).
+cuenta(4, ahorro, 1200, 3).
+cuenta(5, nomina, 5000, 4).
+cuenta(6, ahorro, 5000, 5).
+cuenta(7, null, 100, 6).
+cuenta(8, nomina, 1500, 6).
+
+% Reuniones internas:
+
+clientes_cuentas(N, A, T, S) :- cliente(IdCliente, N, A), cuenta(_, T, S, IdCliente).
+
+
+
+% Reuniones externas:
+
+% Consulta:
+clientes_cuentas_left(N, A, T, S) :- lj(cliente(Id, N, A), cuenta(_, T, S, IdC), Id = IdC).
+
+% Resultado:
+% Info: Processing:
+%   clientes_cuentas_left(N,A,T,S) :-
+%   lj(cliente(Id,N,A),cuenta(_,T,S,IdC),Id=IdC).
+% {
+%   clientes_cuentas_left('Ana','Martin',nomina,21500),
+%   clientes_cuentas_left('Gerardo','de la Iglesia',ahorro,1200),
+%   clientes_cuentas_left('Ignacio','Martin',null,null),
+%   clientes_cuentas_left('Javier','Herranz',ahorro,15000),
+%   clientes_cuentas_left('Javier','Herranz',nomina,12000),
+%   clientes_cuentas_left('Lucia','Rodriguez',ahorro,5000),
+%   clientes_cuentas_left('Manuel','Moreno',nomina,5000),
+%   clientes_cuentas_left('Raquel','Velasco',nomina,1500),
+%   clientes_cuentas_left('Raquel','Velasco',null,100)
+% }
+% Info: 9 tuples computed.
+
+
+% Consulta:
+clientes_cuentas_right(N, A, T, S) :- rj(cliente(Id, N, A), cuenta(_, T, S, IdC), Id = IdC).
+
+% Info: Processing:
+%   clientes_cuentas_right(N,A,T,S) :-
+%   rj(cliente(Id,N,A),cuenta(_,T,S,IdC),Id=IdC).
+% {
+%   clientes_cuentas_right('Ana','Martin',nomina,21500),
+%   clientes_cuentas_right('Gerardo','de la Iglesia',ahorro,1200),
+%   clientes_cuentas_right('Javier','Herranz',ahorro,15000),
+%   clientes_cuentas_right('Javier','Herranz',nomina,12000),
+%   clientes_cuentas_right('Lucia','Rodriguez',ahorro,5000),
+%   clientes_cuentas_right('Manuel','Moreno',nomina,5000),
+%   clientes_cuentas_right('Raquel','Velasco',nomina,1500),
+%   clientes_cuentas_right('Raquel','Velasco',null,100)
+% }
+% Info: 8 tuples computed.
+
+/*
+La principal diferencia entre lj y rj en el ejemplo anterior es que la relación rj devuelve
+una tupla menos ya que, como para el cliente Ignacio Martin no hay ningún dato de ninguna
+cuenta creada, no se devuelve esa información al ser una relación externa por la derecha.
+
+Sin embargo, como la relación externa por la izquierda devuelve todos los datos de la tabla
+izquierda y aquellos que cumplen la condición de la tabla derecha, la tupla para Ignacio
+Martin sí se muestra aunque con valores null para tipo de cuenta y saldo, ya que no existe
+esa información en la tabla de cuentas (la de la derecha).
+*/
+
+
+% Consulta:
+clientes_cuentas_full(N, A, T, S) :- fj(cliente(Id, N, A), cuenta(_, T, S, IdC), Id = IdC).
+
+% Resultado:
+% {
+%   clientes_cuentas_full('Ana','Martin',nomina,21500),
+%   clientes_cuentas_full('Gerardo','de la Iglesia',ahorro,1200),
+%   clientes_cuentas_full('Ignacio','Martin',null,null),
+%   clientes_cuentas_full('Javier','Herranz',ahorro,15000),
+%   clientes_cuentas_full('Javier','Herranz',nomina,12000),
+%   clientes_cuentas_full('Lucia','Rodriguez',ahorro,5000),
+%   clientes_cuentas_full('Manuel','Moreno',nomina,5000),
+%   clientes_cuentas_full('Raquel','Velasco',nomina,1500),
+%   clientes_cuentas_full('Raquel','Velasco',null,100)
+% }
+% Info: 9 tuples computed.
+
+
+
+% Agrupaciones:
+
+% Consulta:
+clientes_cuentas_left(Id, N, A, T, S) :- lj(cliente(Id, N, A), cuenta(_, T, S, _IdC), Id = _IdC).
+clientes_num_cuentas(N, A, NumCuentas) :-
+    group_by(
+        clientes_cuentas_left(Id, N, A, _, S),
+        [Id, N, A],
+        NumCuentas = count(S)
+    ).
+
+% Resultado:
+% {
+%   clientes_num_cuentas('Ana','Martin',1),
+%   clientes_num_cuentas('Gerardo','de la Iglesia',1),
+%   clientes_num_cuentas('Ignacio','Martin',0),
+%   clientes_num_cuentas('Javier','Herranz',2),
+%   clientes_num_cuentas('Lucia','Rodriguez',1),
+%   clientes_num_cuentas('Manuel','Moreno',1),
+%   clientes_num_cuentas('Raquel','Velasco',2)
+% }
+% Info: 7 tuples computed.
+
+
+% Consulta:
+clientes_num_cuentas_y_saldo_total(N, A, NumCuentas, SaldoTotal) :-
+    group_by(
+        clientes_cuentas_left(Id, N, A, T, S),
+        [Id, N, A],
+        (NumCuentas = count(T), SaldoTotal = sum(S))
+    ).
+
+% Resultado:
+% {
+%   clientes_num_cuentas_y_saldo_total('Ana','Martin',1,21500),
+%   clientes_num_cuentas_y_saldo_total('Gerardo','de la Iglesia',1,1200),
+%   clientes_num_cuentas_y_saldo_total('Ignacio','Martin',0,null),
+%   clientes_num_cuentas_y_saldo_total('Javier','Herranz',2,27000),
+%   clientes_num_cuentas_y_saldo_total('Lucia','Rodriguez',1,5000),
+%   clientes_num_cuentas_y_saldo_total('Manuel','Moreno',1,5000),
+%   clientes_num_cuentas_y_saldo_total('Raquel','Velasco',1,1600)
+% }
+% Info: 7 tuples computed.
+
+
+% Consulta:
+clientes_num_cuentas_y_saldo_total_superior(N, A, NumCuentas, SaldoTotal) :-
+    group_by(
+        clientes_cuentas_left(Id, N, A, T, S),
+        [Id, N, A],
+        (NumCuentas = count(T), SaldoTotal = sum(S))
+    ), SaldoTotal > 10000.
+
+% Resultado:
+% {
+%   clientes_num_cuentas_y_saldo_total_superior('Ana','Martin',1,21500),
+%   clientes_num_cuentas_y_saldo_total_superior('Javier','Herranz',2,27000)
+% }
+% Info: 2 tuples computed.   

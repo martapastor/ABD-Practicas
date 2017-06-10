@@ -1,0 +1,78 @@
+/* DATALOG
+
+Las variables son secuencias de caracteres alfanuméricos que comienzan por letra mayúscula
+o barra baja. En los ejemplos que se muestran a continuación, las palabras Nombre, Apellidos,
+Tipo y Saldo actúan como variables.
+*/
+
+% Hechos
+% Corresponden con los distintos INSERT de la tabla cuenta en este caso
+
+cuenta('Javier', 'Herranz', nomina, 12000).
+cuenta('Ana', 'Martin', ahorro, 21500).
+cuenta('Gerardo', 'de la Iglesia', ahorro, 1200).
+cuenta('Manuel', 'Moreno', nomina, 5000).
+cuenta('Lucia', 'Rodriguez', ahorro, 5000).
+cuenta('Raquel', 'Velasco', null, 100).
+
+
+
+% Objetivos
+% Distintas operaciones (SELECT principalemente) que hacemos sobre la 'tabla' cuentas
+
+% Cuentas de las personas cuyo apellido es 'Moreno':
+% cuenta(Nombre, 'Moreno', Tipo, Saldo)
+
+% Cuentas de tipo nómina:
+% cuenta(Nombre, Apellidos, nomina, Saldo)
+
+% Cuentas de tipo nómina con 12000 euros de saldo:
+% cuenta(Nombre, Apellidos, nomina, 12000)
+
+% Cuentas de aquellas personas cuyo nombre y apellidos coincidan:
+% cuenta(X, X, Tipo, Saldo)
+
+
+
+% Reglas
+% Podrian considerarse operaciones SELECT con al menos una condición WHERE
+
+
+% Reglas automáticas
+
+/*
+Son reglas que se crean a partir de una consulta expresada como conjunción de literales; es decir,
+si no escribimos nosotros la consulta en forma de regla con la estructura cabeza:cuerpo,
+Datalog crea la regla automáticamente y la denomina answer(X, Y) tales que las variable X, Y
+no son anónimas.
+*/
+
+% Consulta:
+% cuenta(N, A, T, S), S > 1000, S < 10000
+
+% Resultado:
+% Info: Processing:
+%   answer(N,A,T,S) :-
+%   cuenta(N,A,T,S),
+%   S>1000,
+%   S<10000.
+% {
+%   answer('Gerardo','de la Iglesia',ahorro,1200),
+%   answer('Lucia','Rodriguez',ahorro,5000),
+%   answer('Manuel','Moreno',nomina,5000)
+% }
+% Info: 3 tuples computed.
+
+% Consulta:
+% cuenta(_, A, _, _S), _S > 5000
+
+% Resultado:
+% Info: Processing:
+%   answer(A) :-
+%   cuenta(_,A,_,_S),
+%   _S>5000.
+% {
+%   answer('Herranz'),
+%   answer('Martin')
+% }
+% Info: 2 tuples computed.

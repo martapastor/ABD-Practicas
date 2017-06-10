@@ -1,0 +1,81 @@
+
+% Hechos
+
+nodo(a).
+nodo(b).
+nodo(c).
+nodo(d).
+nodo(e).
+nodo(f).
+nodo(g).
+nodo(h).
+nodo(i).
+
+arista(a, b).
+arista(b, d).
+arista(d, c).
+arista(d, e).
+arista(e, f).
+arista(f, c).
+arista(f, g).
+% arista(g, d).
+arista(a, h).
+arista(i, h).
+
+/*
+El predicado arista(Z, Y) de la consulta sirve para comprobar si ambos nodos
+están conectados, ya que en cuanto ese predicado devuelva FALSE, la consulta
+entera devuelve FALSE ya que no existe camino alguno.
+*/
+
+
+% Objetivos:
+
+% Camino:
+camino(X, Y) :- arista(X, Y).
+camino(X, Y) :- arista(X, Z), camino(Z, Y).
+
+
+% Ciclo:
+ciclo(Z) :- camino(Z, Z).
+
+
+% Distancia entre dos nodos de un grafo:
+camino(X, X, 0) :- nodo(X).
+camino(X, Y, Dist) :- camino(X, Z, Dist1), arista(Z, Y), Dist is Dist1 + 1.
+
+/*
+Para que la función que devuelve la distancia entre dos nodos no se quede colgada
+en un bucle infinito, no pueden existir ciclos en el grafo (es decir, hemos comentado
+la arista(g, d) ya que cerraba un camino circular desde a).
+*/
+
+% Ejemplos:
+
+% Consulta:
+% camino(a, Y, Dist).
+
+% Resultado:
+% {
+%   camino(a,a,0),
+%   camino(a,b,1),
+%   camino(a,c,3),
+%   camino(a,c,5),
+%   camino(a,d,2),
+%   camino(a,e,3),
+%   camino(a,f,4),
+%   camino(a,g,5),
+%   camino(a,h,1)
+% }
+% Info: 9 tuples computed.
+
+
+% Consulta:
+% camino(i, Y, Dist).
+
+% Resultado:
+% {
+%   camino(i,h,1),
+%   camino(i,i,0)
+% }
+% Info: 2 tuples computed.

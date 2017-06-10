@@ -1,0 +1,15 @@
+
+% Towers of Hanoi
+
+hanoi(1, A, B, C).
+hanoi(N, A, B, C) :-
+  N>1, N1 is N-1,
+  hanoi(N1, A, C, B),
+  hanoi(N1, C, B, A).
+
+
+
+% hanoi(10,a,b,c)
+% {
+%   hanoi(10,a,b,c)
+% }
