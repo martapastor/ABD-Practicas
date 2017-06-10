@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF−8"?>
+<schema targetNamespace="http://www.ucm.es/Contactos"
+        elementFormDefault="qualified"
+        xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:tns="http://www.ucm.es/Contactos">
+
+    <element name="agenda">
+        <complexType>
+            <sequence>
+                <element name="nombre" type="string"></element>
+                <element name="apellidos" type="string"></element>
+                <element name="direccion">
+                    <complexType>
+                        <sequence>
+                            <element name="calle" type="string"></element>
+                            <element name="numero" type="int"></element>
+                            <element name="codigo-postal" type="int"></element>
+                            <element name="localidad" type="string"></element>
+                        </sequence>
+                    </complexType>
+                </element>
+                <element name="telefono" maxOccurs="unbounded" minOccurs="1">
+                    <complexType>
+                        <attribute name="tipo" use="required">
+                            <simpleType base="string">
+                                <enumeration value="casa"/>
+                                <enumeration value="trabajo"/>
+                                <enumeration value="movil"/>
+                            </simpleType>
+                        </attribute>
+                    </complexType>
+                </element>
+            </sequence>
+
+            <attribute name="dni" type="string" use="required"></attribute>
+        </complexType>
+    </element>
+</schema>

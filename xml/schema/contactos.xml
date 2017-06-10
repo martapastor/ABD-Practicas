@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF−8"?>
+
+<agenda xmlns="http://www.ucm.es/Contactos"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema−instance"
+        xsi:schemaLocation="http://www.ucm.es/Contactos contactos.xsd ">
+        
+    <contacto dni=”51233412H”>
+        <nombre>David</nombre>
+        <apellidos>Álvez Campos</apellidos>
+        <direccion>
+            <calle>Paseo de Ondarreta</calle>
+            <numero>5</numero>
+            <codigo-postal>20018</codigo-postal>
+            <localidad>San Sebastián</localidad>
+        </direccion>
+        <telefono tipo="casa">943102321</telefono>
+        <telefono tipo="movil">617702341</telefono>
+    </contacto>
+
+    <contacto dni="46821354T">
+        <nombre>Víctor</nombre>
+        <apellidos>Martín Moreno</apellidos>
+        <telefono tipo="casa">914621100</telefono>
+    </contacto>
+</agenda>
