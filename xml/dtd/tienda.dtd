@@ -1,0 +1,16 @@
+<!ELEMENT tienda (articulo*, lista-compra)>
+    <!ELEMENT articulo (nombre, cantidad, precio+)>
+        <!ELEMENT nombre (#PCDATA)>
+        <!ELEMENT cantidad (#PCDATA)>
+        <!ELEMENT precio (#PCDATA)>
+    <!ELEMENT lista-compra (articulos, total)>
+        <!ELEMENT articulos (producto)*>
+            <!ELEMENT producto EMPTY>
+        <!ELEMENT total (#PCDATA)>
+
+<!ATTLIST articulo id ID #REQUIRED>
+    <!ATTLIST precio divisa CDATA "EUR">
+<!ATTLIST producto id IDREF #REQUIRED>
+<!ATTLIST producto cantidad CDATA "1">
+<!ATTLIST producto descuento CDATA "0">
+<!ATTLIST total divisa CDATA "EUR">

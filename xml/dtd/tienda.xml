@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF−8"?>
+<!DOCTYPE tienda SYSTEM "tienda.dtd">
+
+<tienda>
+    <articulo id="c01">
+        <nombre>Aceite Virgen Extra Serie ORO</nombre>
+        <cantidad>500 ml</cantidad>
+        <precio divisa="EUR">8.36</precio>
+        <precio divisa="GBP">7.17</precio>
+    </articulo>
+
+    <articulo id="c02">
+        <nombre>Aceite Virgen Extra</nombre>
+        <cantidad>1000 ml</cantidad>
+        <precio divisa="EUR">7.50</precio>
+        <precio divisa="GBP">6.43</precio>
+    </articulo>
+
+    <lista-compra>
+        <articulos>
+            <producto id="c01" cantidad="2" descuento="15"/>
+            <producto id="c02" cantidad="1"/>
+        </articulos>
+
+        <total divisa="EUR">21.71</total>
+    </lista-compra>
+</tienda>
