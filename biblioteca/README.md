@@ -83,3 +83,19 @@ VALUES (1, 6, 6);
 ```
 
 ![Libros de ejemplo](img/books.jpg)
+
+### PRÁCTICA 3
+
+Diseña las siguientes páginas PHP que accedan a la base de datos `biblioteca`:
+
+* Página de login para el usuario: el usuario introducirá su nombre de usuario (en nuestro caso, el correo electrónico con el que se registró) y su contraseña. Si son correctos se mostrarán los libros que tiene.
+
+* Página de altas: permite dar de alta libros y usuarios.
+
+Para ello, modificamos primero la tabla `usuarios` para añadir los dos campos (email y contraseña) necesarios para comprobar el inicio de sesión del usuario:
+
+```sql
+ALTER TABLE `usuarios`
+ADD `email` VARCHAR(64) NOT NULL AFTER `nombre`,
+ADD `password` VARCHAR(64) NOT NULL AFTER `email`;
+```
