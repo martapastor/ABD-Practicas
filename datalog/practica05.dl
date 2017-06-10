@@ -1,0 +1,78 @@
+
+% Librería:
+
+% libros(Titulo, Ibsn, Autor, Tema, Ano, Editorial, Precio, Unidades).
+libros('Harry Potter y la piedra filosofal', 3624138619542, 'J. K. Rowling', 'fantasia', 1996, 'Salamandra', 19.99, 20).
+libros('Harry Potter y la camara secreta', 3624138619543, 'J. K. Rowling', 'fantasia', 1999, 'Salamandra', 19.99, 6).
+libros('El senor de las moscas', 1485672190561, 'William Golding', 'aventuras', 1960, 'Alianza Editorial', 9.99, 15).
+libros('Antología Poética', 1485622135314, 'Gloria Fuertes', 'poesia', 2017, 'Grupo Planeta', 49.99, 10).
+
+% clientes(Nombre, Nif, Num-pedido).
+clientes('Eloy Mosig', '7135267J', 2000).
+clientes('Marta Pastor', '71472183R', 1000).
+clientes('Maria Benavente', '7179543L', 3000).
+
+% pedidos(Num-pedido, Dia, Mes, Ano, Ibsn, Unidades).
+pedidos(2000, 15, 03, 2017, 3624138619543, 1).
+pedidos(2000, 01, 06, 2017, 1485622135314, 1).
+pedidos(3000, 09, 06, 2017, 1485622135314, 6).
+
+
+% 1. Libros de un autor dado.
+autor(T, Autor, A, P) :- libros(T, _, Autor, _, A, _, P, _).
+
+
+% 2. Libros "caros" (precio mayor de 40 euros).
+libros_caros(T, Autor, P) :- libros(T, _, Autor, _, _, _, P, _), P > 40.
+
+
+% 3. Libros casi agotados (menos de 10 unidades).
+libros_casi_agotados(T, Autor, U) :- libros(T, _, Autor, _, _, _, _, U), U < 10.
+
+
+% 4. Libros antiguos (anteriores a 1980).
+libros_antiguos(T, Autor, A) :- libros(T, _, Autor, _, A, _, _, _), A < 1980.
+
+
+% 5. Libros comprados por cada cliente (especifica sólo el título).
+libros_comprados_cliente(C, T) :- libros(T, I, _, _, _, _, _, _), pedidos(NumPedido, _, _, _, I, _), clientes(C, _, NumPedido).
+
+
+% 6. Libros comprados por cliente por año.
+% Contando sólo cuántos títulos distintos se han comprado
+libros_comprados_ano(C, A, Total) :- count(libros(_, I, _, _, _, _, _, _), pedidos(NumPedido, _, _, A, I, _), clientes(C, _, NumPedido), Total).
+
+% Contando también cuántas unidades de cada título distinto se han comprado
+libros_comprados_ano_unidades(C, A, Total) :- sum(libros(_, I, _, _, _, _, _, _), pedidos(NumPedido, _, _, A, I, U), clientes(C, _, NumPedido), U, Total).
+
+
+% 7. Libros comprados por cliente por título.
+libros_comprados_titulo(C, T, Total) :- sum(libros(T, I, _, _, _, _, _, _), pedidos(NumPedido, _, _, _, I, U), clientes(C, _, NumPedido), U, Total).
+
+
+% 8. Ingresos por venta por año.
+ingresos_venta_ano(NumPedido, A, Total) :- sum(libros(_, I, _, _, _, _, P, _), pedidos(NumPedido, _, _, A, I, U), clientes(C, _, NumPedido), P*U, Total).
+
+
+% 9. Ingresos por venta por libro.
+ingresos_venta_libro(NumPedido, T, Total) :- sum(libros(T, I, _, _, _, _, P, _), pedidos(NumPedido, _, _, A, I, U), clientes(C, _, NumPedido), P*U, Total).
+
+
+% 10. Ingresos por venta por libro y año.
+ingresos_venta_libro_ano(NumPedido, T, A, Total) :- sum(libros(T, I, _, _, _, _, P, _), pedidos(NumPedido, _, _, A, I, U), clientes(C, _, NumPedido), P*U, Total).
+
+
+% 11. Todos los pedidos y su fecha.
+todos_los_pedidos(NumPedido, D, M, A) :- pedidos(NumPedido, D, M, A, _, _).
+
+
+% 12. Ingresos por tema y año.
+ingresos_tema_ano(Tema, A, Total) :- sum(libros(_, I, _, Tema, _, _, P, _), pedidos(NumPedido, _, _, A, I, U), clientes(C, _, NumPedido), P*U, Total).
+
+
+% 13. Ingresos por editorial y año.
+ingresos_editorial_ano(Editorial, A, Total) :- sum(libros(_, I, _, _, _, Editorial, P, _), pedidos(NumPedido, _, _, A, I, U), clientes(C, _, NumPedido), P*U, Total).
+
+
+% 14. Ingresos por título.
+ingresos_titulo(T, Total) :- sum(libros(T, I, _, _, _, _, P, _), pedidos(NumPedido, _, _, A, I, U), clientes(C, _, NumPedido), P*U, Total).
