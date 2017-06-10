@@ -1,0 +1,46 @@
+
+%cliente(Id-cliente, Nombre, Telefono):
+cliente(1, pepe, 444).
+cliente(1, pepe, 222).
+cliente(2, juan, 111).
+cliente(2, juan, 333).
+
+%telefono(Telefono, Mes, Gasto):
+telefono(444, 1, 420).
+telefono(444, 2, 430).
+telefono(444, 3, 425).
+telefono(222, 1, 222).
+telefono(222, 2, 210).
+telefono(222, 2, 215).
+telefono(222, 3, 215).
+telefono(111, 1, 160).
+telefono(333, 2, 310).
+telefono(333, 3, 315).
+
+
+
+% 1. Todos los consumos para cada cliente.
+todos_los_consumos(Cliente, M, G) :- cliente(_, Cliente, T), telefono(T, M, G).
+
+% 2. Consumos por teléfono.
+consumos_telefono(T, Total) :- sum(cliente(_, _, T), telefono(T, _, G), G, Total).
+consumo_por_tel(T,C):- group_by(telefono(T, _, I), [T], C=sum(I)).
+
+
+% 3. Consumos por mes.
+consumos_mes(Mes, Total) :- sum(cliente(_, _, T), telefono(T, Mes, G), G, Total).
+consumo_por_mes(M, C):- group_by(telefono(_, M, I), [M], C=sum(I)).
+
+
+% 4. Consumos por teléfono y mes.
+consumos_telefono_mes(T, Mes, Total) :- sum(cliente(_, _, T), telefono(T, Mes, G), G, Total).
+consumo_por_tel_mes(T, M, C) :- group_by(telefono(T, M, I), [T, M], C=sum(I)).
+
+
+% 5. Consumos por cliente.
+consumos_cliente(Cliente, Total) :- sum(cliente(_, Cliente, T), telefono(T, _, G), G, Total).
+consumo_por_cliente(N, C) :- group_by(todos_los_consumos(N, _, I), [N], C=sum(I)).
+
+% 6. Consumos por cliente y mes.
+consumos_cliente_mes(Cliente, Mes, Total) :- sum(cliente(_, Cliente, T), telefono(T, Mes, G), G, Total).
+consumo_por_cliente_mes(N, M, C) :- group_by(todos_los_consumos(N, M, I), [N, M], C=sum(I)).
