@@ -1,0 +1,119 @@
+Crea la base de datos videoclub.
+
+    use videoclub
+
+
+Crea la colección películas.
+
+    db.createCollection("peliculas")
+
+
+Inserta documentos que representen a películas. Campos a tener en cuenta: título, año de estreno, actores y género.
+
+    > db.peliculas.insert({"titulo" : "Lo que el viento se llevó", "estreno" : 1939, "actores" : ["Clark Gable", "Vivien Leigh"], "genero" : "drama"})
+    WriteResult({ "nInserted" : 1 })
+
+    > db.peliculas.insert({"titulo" : "Casablanca", "estreno" : 1939, "actores" : ["Humphrey Bogart", "Ingrid Bergman"], "genero" : "drama"})
+    WriteResult({ "nInserted" : 1 })
+
+    > db.peliculas.insert({"titulo" : "Kingsman", "estreno" : 2014, "actores" : ["Colin Firth", "Taron Egerton", "Samuel L. Jackson"], "genero" : "accion"})
+    WriteResult({ "nInserted" : 1 })
+
+    > db.peliculas.insert({"titulo" : "Sherlock Holmes", "estreno" : 2009, "actores" : ["Robert Downey Jr.", "Jude Law"], "genero" : "accion"})
+    WriteResult({ "nInserted" : 1 })
+
+    > db.peliculas.insert({"titulo" : "500 Days of Summer", "estreno" : 2009, "actores" : ["Zooey Deschanel", "Joseph Gordon-Levitt"], "genero" : "romance"})
+    WriteResult({ "nInserted" : 1 })
+
+    > db.peliculas.insert({"titulo" : "Matrix", "estreno" : 1980, "actores" : ["Keanu Reeves", "Laurence Fishburne"], "genero" : "suspense"})
+    WriteResult({ "nInserted" : 1 })
+
+
+Para que la siguiente operación pueda llevarse a cabo, se ha creado una entrada para una película con título 'Matrix'.
+Actualizar la película de título "Matrix" con la siguiente información
+
+    > db.peliculas.findOne({"titulo" : "Matrix"})
+    {
+    	"_id" : ObjectId("593dc3433a54e67513c7d6e6"),
+    	"titulo" : "Matrix",
+    	"estreno" : 1980,
+    	"actores" : [
+    		"Keanu Reeves",
+    		"Laurence Fishburne"
+    	],
+    	"genero" : "suspense"
+    }
+
+    > db.peliculas.update({"titulo" : "Matrix"}, {"$set" : {"tipo" : "DVD", "estreno" : 1999, "genero" : "accion"}})
+    WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+
+Considerar el libro Constantinopla, y añadirlo a la colección media e incrementar en cinco unidades el valor de la clave leídos.
+
+    > db.createCollection("media")
+    { "ok" : 1 }
+
+    > db.media.insert({"tipo" : "libro", "titulo" : "Constantinopla", "capitulos" : 12, "leidos" : 3})
+    WriteResult({ "nInserted" : 1 })
+
+    > db.media.findOne({"titulo" : "Constantinopla"})
+    {
+    	"_id" : ObjectId("593dc3993a54e67513c7d6e7"),
+    	"tipo" : "libro",
+    	"titulo" : "Constantinopla",
+    	"capitulos" : 12,
+    	"leidos" : 3
+    }
+
+    > db.media.update({"_id" : ObjectId("593dc3993a54e67513c7d6e7")}, {"$inc" : {"leidos" : 3}})
+    WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+
+ Actualizar el documento referido a la película Matrix cambiando el valor de la clave género a ciencia ficción.
+
+    > db.peliculas.findOne({"titulo" : "Matrix"})
+    {
+    	"_id" : ObjectId("593dc3433a54e67513c7d6e6"),
+    	"titulo" : "Matrix",
+    	"estreno" : 1999,
+    	"actores" : [
+    		"Keanu Reeves",
+    		"Laurence Fishburne"
+    	],
+    	"genero" : "accion",
+    	"tipo" : "DVD"
+    }
+
+    > db.peliculas.update({"_id" : ObjectId("593dc3433a54e67513c7d6e6")}, {"$set" : {"genero" : "ciencia ficcion"}})
+
+
+Actualizar el documento referido a la película Matrix añadiendo al array actores los valores de Antonio Banderas y Brad Pitt en una única operación.
+
+    > db.peliculas.update({"_id" : ObjectId("593dc3433a54e67513c7d6e6")}, {"$push" : {"actores" : {"$each" : ["Antonio Banderas", "Brad Pitt"]}}})
+    WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+    > db.peliculas.findOne({"_id" : ObjectId("593dc3433a54e67513c7d6e6")})
+    {
+    	"_id" : ObjectId("593dc3433a54e67513c7d6e6"),
+    	"titulo" : "Matrix",
+    	"estreno" : 1999,
+    	"actores" : [
+    		"Keanu Reeves",
+    		"Laurence Fishburne",
+    		"Antonio Banderas",
+    		"Brad Pitt"
+    	],
+    	"genero" : "ciencia ficcion",
+    	"tipo" : "DVD"
+    }
+
+
+Actualizar el documento referido a la película Matrix añadiendo al array actores los valores Joe Pantoliano, Brad Pitt y Natalie Portman.
+
+    > SIN COMPLETAR
+
+
+
+Actualizar el documento de la película Matrix eliminando del array el primer y último actor.
+
+    > SIN COMPLETAR

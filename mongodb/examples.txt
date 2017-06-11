@@ -3,52 +3,68 @@
 
 // Ejemplos de los apuntes:
 
+    Creamos una base de datos nueva:
 $   > use db_examples
 $   switched to db db_examples
 
+    Creamos una colección nueva en la base de datos (lo que correspondería a una tabla)
 $   > db.createCollection("collection_examples")
 $   { "ok" : 1 }
 
+    Insertamos un nuevo elemento en la colección con el campo (columna) 'titulo'
 $   > db.coleccion_examples.insert({"titulo" : "El Quijote"})
 $   WriteResult({ "nInserted" : 1 })
 
+    Insertamos otro elemento, esta vez con los campos (columnas) 'nombre' y 'direccion'.
+    Esta última a su vez correspondería con una referencia a la tabla 'direccion' con las columnas 'calle', 'ciudad' y 'pais'
 $   > db.coleccion_examples.insert({"nombre" : "Juan Bosque", "direccion" : {"calle" : "Mayor, 3", "ciudad" : "Madrd", "pais" : "España"}})
 $   WriteResult({ "nInserted" : 1 })
 
+    Creamos una tabla nueva
 $   > db.createCollection("usuarios")
 $   { "ok" : 1 }
 
+    Insertamos varios elementos en la tabla con las columnas 'nombre', 'edad' y 'direccion'
 $   > db.usuarios.insert({"nombre" : "Helena", "edad" : 27, "direccion" : { "calle" : "Rue del Percebe, 13", "ciudad" : "Madrid", "pais" : "España"}})
 $   WriteResult({ "nInserted" : 1 })
 
 $   > db.usuarios.insert({"nombre" : "Eloy", "edad" : 18, "direccion" : { "calle" : "Paseo Juan XXIII, 9", "ciudad" : "Madrid", "pais" : "España"}})
 $   WriteResult({ "nInserted" : 1 })
 
+    SELECT * FROM usuarios WHERE edad = "27"
 $   > db.usuarios.find({"edad" : "27"})
 $   No results.
 
+    SELECT * FROM usuarios WHERE edad = 27
 $   > db.usuarios.find({"edad" : 27})
 $   { "_id" : ObjectId("593d66cb534ece659e93a193"), "nombre" : "Helena", "edad" : 27, "direccion" : { "calle" : "Rue del Percebe, 13", "ciudad" : "Madrid", "pais" : "España" } }
 
+    SELECT nombre FROM usuarios WHERE edad = 27
 $   > db.usuarios.find({"edad" : 27}, {"nombre" : 1, "_id" : 0})
 $   { "nombre" : "Helena" }
 
+    SELECT * FROM usuarios WHERE edad > 18 AND edad < 25
 $   > db.usuarios.find({"edad" : {"$gte" : 18, "$lte" : 25}})
 $   { "_id" : ObjectId("593d66fd534ece659e93a194"), "nombre" : "Eloy", "edad" : 18, "direccion" : { "calle" : "Paseo Juan XXIII, 9", "ciudad" : "Madrid", "pais" : "España" } }
 
+    SELECT * FROM usuarios WHERE nombre != "Helena"
 $   > db.usuarios.find({"nombre" : {"$ne" : "Helena"}})
 $   { "_id" : ObjectId("593d66fd534ece659e93a194"), "nombre" : "Eloy", "edad" : 18, "direccion" : { "calle" : "Paseo Juan XXIII, 9", "ciudad" : "Madrid", "pais" : "España" } }
 
+    Insertamos un nuevo elemento a la tabla 'usuarios'
 $   > db.usuarios.insert({"nombre" : "Marta", "edad" : 20, "direccion" : { "calle" : "Manuela Malasaña, 4", "ciudad" : "Madrid", "pais" : "España"}})
 $   WriteResult({ "nInserted" : 1 })
 
+    SELECT * FROM usuarios WHERE edad = 18 OR edad = 20
 $   > db.usuarios.find({"edad" : {"$in" : [18, 20]}})
 $   { "_id" : ObjectId("593d66fd534ece659e93a194"), "nombre" : "Eloy", "edad" : 18, "direccion" : { "calle" : "Paseo Juan XXIII, 9", "ciudad" : "Madrid", "pais" : "España" } }
 $   { "_id" : ObjectId("593d68a7534ece659e93a195"), "nombre" : "Marta", "edad" : 20, "direccion" : { "calle" : "Manuela Malasaña, 4", "ciudad" : "Madrid", "pais" : "España" } }
 
+    SELECT * FROM usuarios WHERE edad = 18
 $   > db.usuarios.find({"edad" : {"$in" : [18]}})
 $   { "_id" : ObjectId("593d66fd534ece659e93a194"), "nombre" : "Eloy", "edad" : 18, "direccion" : { "calle" : "Paseo Juan XXIII, 9", "ciudad" : "Madrid", "pais" : "España" } }
 
+    SELECT * FROM usuarios WHERE edad = 18 (igual que el anterior, aunque menos eficiente)
 $   > db.usuarios.find({"$or" : [{"edad" : 18}]})
 $   { "_id" : ObjectId("593d66fd534ece659e93a194"), "nombre" : "Eloy", "edad" : 18, "direccion" : { "calle" : "Paseo Juan XXIII, 9", "ciudad" : "Madrid", "pais" : "España" } }
 
