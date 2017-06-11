@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF−8"?>
+
+<!-- 1. Mostrar cada uno de los nombres de los bailes con la etiqueta 'losbailes'. -->
+    for $b in doc("xquery/bailes.xml")/bailes/baile
+    return  <losbailes>
+                { data($b/nombre) }
+            </losbailes>
+
+
+<!-- 2. Mostrar los nombres de los bailes seguidos con el número de plazas entre paréntesis, ambos dentro de la misma etiqueta 'losbailes'. -->
+    for $b in doc("xquery/bailes.xml")/bailes/baile
+    return  <losbailes>
+                { data($b/nombre) } ({ data($b/plazas) })
+            </losbailes>
+
+
+<!-- 3. Mostrar los nombres de los bailes cuyo precio sea mayor de 30. -->
+    for $b in doc("xquery/bailes.xml")/bailes/baile
+    where $b/precio > 30
+    return  <losbailes>
+                { data($b/nombre) }
+            </losbailes>
+
+
+<!-- 4. Mostrar los nombres de los bailes cuyo precio sea mayor de 30 y la moneda 'euro'. -->
+    for $b in doc("xquery/bailes.xml")/bailes/baile
+    where $b/precio > 30 and $b/precio/@moneda = "euro"
+    return  <losbailes>
+                { data($b/nombre) }
+            </losbailes>
+
+
+<!-- 5. Mostrar los nombres y la fecha de comienzo de los bailes que comiencen el mes de enero (utiliza para buscarlo la cadena de texto '/1/'). -->
+    for $b in doc("xquery/bailes.xml")/bailes/baile
+    where contains($b/comienzo, "/1/")
+    return  <losbailes>
+                { data($b/nombre) }
+                { data($b/comienzo) }
+            </losbailes>
+
+
+<!-- 6. Mostrar los nombres de los profesores y la sala en la que dan clase, ordénalos por sala. -->
+    for $b in doc("xquery/bailes.xml")/bailes/baile
+    order by $b/sala
+    return  <profesor>
+                { data($b/profesor) }
+                { data($b/sala) }
+            </profesor>
+
+
+<!-- 7. Mostrar los nombres de los profesores eliminando los repetidos y acompañar cada nombre con todas las salas en la que da clase, ordénalos por nombre. -->
+    for $p in distinct-values(doc("xquery/bailes.xml")/bailes/baile/profesor)
+    let $s := doc("xquery/bailes.xml")/bailes/baile[profesor=$p]/sala
+    order by $p
+    return  <profesor>
+                <nombre>
+                    { data($p) }
+                </nombre>
+                { $s }
+            </profesor>
+    <!-- Filtramos por el campo profesor en cada iteración del bucle tal que ese campo sea igual al
+    profesor actual, que no se va a repetir ya que en la condición del primer bucle for hacemos un
+    distinct-->
+
+
+<!-- 8. Mostrar la media de los precios de todos los bailes. -->
+    let $b := doc("xquery/bailes.xml")/bailes/baile
+    return  <precio-medio>
+                { avg($b/precio) }
+            </precio-medio>
+
+
+<!-- 9. Mostrar la suma de los precios de los bailes de la sala 1. -->
+    let $sum := doc("xquery/bailes.xml")/bailes/baile[sala=1]/precio
+    return  <precio-sala-1>
+                { sum($sum) }
+            </precio-sala-1>
+
+
+<!-- 10. Mostrar cuántas plazas en total oferta el profesor 'Jesus Lozano'. -->
+    let $plazas := doc("xquery/bailes.xml")/bailes/baile[profesor="Jesus Lozano"]/plazas
+    return  <plazas-jesus-lozano>
+                { sum($plazas) }
+            </plazas-jesus-lozano>
+
+
+<!-- 11. Mostrar el dinero que ganaría la profesora 'Laura Mendiola' si se completaran todas las plazas de su baile, sabiendo que sólo tiene un baile. -->
+    let $total := doc("xquery/bailes.xml")/bailes/baile[profesor="Laura Mendiola"]
+    return  <ingresos-laura-mendiola>
+                { sum($total/plazas * $total/precio) }
+            </ingresos-laura-mendiola>
+
+
+<!-- 12. Mostrar el dinero que ganaría el profesor 'Jesus Lozano' si se completaran todas las plazas de su baile, pero mostrando el beneficio de cada baile por separado. -->
+    for $b in doc("xquery/bailes.xml")/bailes/baile[profesor="Jesus Lozano"]
+    return  <ingresos-jesus-lozano>
+                <baile>
+                    { data($b/nombre) }
+                </baile>
+                { sum($b/plazas * $b/precio) }
+            </ingresos-jesus-lozano>
+
+<!-- 13.  Mostrar el nombre del baile, su precio y el precio con un descuento del 15% para familias numerosas. Ordenar por el nombre del baile. -->
+    for $b in doc("xquery/bailes.xml")/bailes/baile
+    order by $b/nombre
+    return  <familia-numerosa>
+                <nombre>
+                    {data($b/nombre)}
+                </nombre>
+
+                <precio>
+                    {data($b/precio)}
+                </precio>
+
+                <precio-con-descuento>
+                    {data($b/precio * 0.85)}
+                </precio-con-descuento>
+            </familia-numerosa>
+
+<!-- 14. Mostrar todos los datos de cada baile excepto la fecha de comienzo y de fin. -->
+    for $b in doc("xquery/bailes.xml")/bailes/baile
+    return  <baile>
+                { $b/*
+                except $b/comienzo
+                except $b/fin }
+            </baile>
+
+<!-- 15. Mostrar en una tabla de HTML los nombres de los bailes y su profesor, cada uno en una fila. -->
