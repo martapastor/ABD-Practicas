@@ -1,0 +1,56 @@
+// use mi_bbdd: crea o abre la base de datos mi_bbdd.
+// db.createCollection("mi_coleccion"): crea la colección mi_coleccion.
+
+// Ejemplos de los apuntes:
+
+$   > use db_examples
+$   switched to db db_examples
+
+$   > db.createCollection("collection_examples")
+$   { "ok" : 1 }
+
+$   > db.coleccion_examples.insert({"titulo" : "El Quijote"})
+$   WriteResult({ "nInserted" : 1 })
+
+$   > db.coleccion_examples.insert({"nombre" : "Juan Bosque", "direccion" : {"calle" : "Mayor, 3", "ciudad" : "Madrd", "pais" : "España"}})
+$   WriteResult({ "nInserted" : 1 })
+
+$   > db.createCollection("usuarios")
+$   { "ok" : 1 }
+
+$   > db.usuarios.insert({"nombre" : "Helena", "edad" : 27, "direccion" : { "calle" : "Rue del Percebe, 13", "ciudad" : "Madrid", "pais" : "España"}})
+$   WriteResult({ "nInserted" : 1 })
+
+$   > db.usuarios.insert({"nombre" : "Eloy", "edad" : 18, "direccion" : { "calle" : "Paseo Juan XXIII, 9", "ciudad" : "Madrid", "pais" : "España"}})
+$   WriteResult({ "nInserted" : 1 })
+
+$   > db.usuarios.find({"edad" : "27"})
+$   No results.
+
+$   > db.usuarios.find({"edad" : 27})
+$   { "_id" : ObjectId("593d66cb534ece659e93a193"), "nombre" : "Helena", "edad" : 27, "direccion" : { "calle" : "Rue del Percebe, 13", "ciudad" : "Madrid", "pais" : "España" } }
+
+$   > db.usuarios.find({"edad" : 27}, {"nombre" : 1, "_id" : 0})
+$   { "nombre" : "Helena" }
+
+$   > db.usuarios.find({"edad" : {"$gte" : 18, "$lte" : 25}})
+$   { "_id" : ObjectId("593d66fd534ece659e93a194"), "nombre" : "Eloy", "edad" : 18, "direccion" : { "calle" : "Paseo Juan XXIII, 9", "ciudad" : "Madrid", "pais" : "España" } }
+
+$   > db.usuarios.find({"nombre" : {"$ne" : "Helena"}})
+$   { "_id" : ObjectId("593d66fd534ece659e93a194"), "nombre" : "Eloy", "edad" : 18, "direccion" : { "calle" : "Paseo Juan XXIII, 9", "ciudad" : "Madrid", "pais" : "España" } }
+
+$   > db.usuarios.insert({"nombre" : "Marta", "edad" : 20, "direccion" : { "calle" : "Manuela Malasaña, 4", "ciudad" : "Madrid", "pais" : "España"}})
+$   WriteResult({ "nInserted" : 1 })
+
+$   > db.usuarios.find({"edad" : {"$in" : [18, 20]}})
+$   { "_id" : ObjectId("593d66fd534ece659e93a194"), "nombre" : "Eloy", "edad" : 18, "direccion" : { "calle" : "Paseo Juan XXIII, 9", "ciudad" : "Madrid", "pais" : "España" } }
+$   { "_id" : ObjectId("593d68a7534ece659e93a195"), "nombre" : "Marta", "edad" : 20, "direccion" : { "calle" : "Manuela Malasaña, 4", "ciudad" : "Madrid", "pais" : "España" } }
+
+$   > db.usuarios.find({"edad" : {"$in" : [18]}})
+$   { "_id" : ObjectId("593d66fd534ece659e93a194"), "nombre" : "Eloy", "edad" : 18, "direccion" : { "calle" : "Paseo Juan XXIII, 9", "ciudad" : "Madrid", "pais" : "España" } }
+
+$   > db.usuarios.find({"$or" : [{"edad" : 18}]})
+$   { "_id" : ObjectId("593d66fd534ece659e93a194"), "nombre" : "Eloy", "edad" : 18, "direccion" : { "calle" : "Paseo Juan XXIII, 9", "ciudad" : "Madrid", "pais" : "España" } }
+
+    // Tanto la instrucción OR como la instrucción IN devuelven el mismo resultado, aunque se recomienda
+    // usar IN siempre que sea posible dado que es más eficiente.
