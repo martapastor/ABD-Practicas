@@ -1,0 +1,56 @@
+<!--
+Define una DTD que valide el documento XML para representar facturas.
+
+Construye una DTD con las siguientes características:
+        * El número de factura nfac, número de cliente ncli y número de pedido nped son valores únicos, por cada factura, cliente y pedido distintos. Son obligatorios.
+        * Los números de teléfono y fax de la empresa no tienen por qué aparecer en la factura, pero siempre que lo hagan deberán tener los mismos valores (teléfono 917776688, fax 917776699).
+        * La forma de pago puede tomar los valores: efectivo, tarjeta y plazos.
+        * La moneda tiene que aparecer siempre, y siempre toma el valor euro.
+        * El IVA tiene que aparecer siempre, y su valor no puede contener caracteres especiales. -->
+
+<!-- Estilo general -->
+
+<!ELEMENT factura (datos_empresa, datos_cliente, datos_factura)>
+
+        <!ELEMENT datos_empresa (nombre,dir,poblacion,provincia,cif,telefono?,fax?)>
+                <!ELEMENT nombre (#PCDATA)>
+                <!ELEMENT dir (#PCDATA)>
+                <!ELEMENT poblacion (#PCDATA)>
+                <!ELEMENT provincia (#PCDATA)>
+                <!ELEMENT cif (#PCDATA)>
+                <!ELEMENT telefono EMPTY>
+                <!ELEMENT fax EMPTY>
+
+        <!ELEMENT datos_cliente (nombre, dir_env, poblacion, provincia)>
+                <!-- <!ELEMENT nombre (#PCDATA)> -->
+                <!ELEMENT dir_env (#PCDATA)>
+                <!-- <!ELEMENT poblacion (#PCDATA)> -->
+                <!-- <!ELEMENT provincia (#PCDATA)> -->
+
+        <!ELEMENT datos_factura (fecha, linea*, base, cuota_iva, total)>
+                <!ELEMENT fecha (#PCDATA)>
+                <!ELEMENT linea (ref, desc, cant, precio, importe)>
+                        <!ELEMENT ref (#PCDATA)>
+                        <!ELEMENT desc (#PCDATA)>
+                        <!ELEMENT cant (#PCDATA)>
+                        <!ELEMENT precio (#PCDATA)>
+                        <!ELEMENT importe (#PCDATA)>
+                <!ELEMENT base (#PCDATA)>
+                <!ELEMENT cuota_iva (#PCDATA)>
+                <!ELEMENT total (#PCDATA)>
+
+
+<!-- Restricciones -->
+
+<!ATTLIST factura nfac ID #REQUIRED>
+<!ATTLIST datos-cliente ncli ID #REQUIRED>
+<!ATTLIST datos-factura nped ID #REQUIRED>
+
+<!ELEMENT datos-empresa telefono (917776688)?>
+<!ELEMENT datos-empresa fax (917776699)?>
+
+<!ATTLIST datos-factura f-pago (efectivo | tarjeta | plazos)>
+
+<!ATTLIST datos-factura moneda #FIXED "euro">
+
+<!ATTLIST datos-factura iva #REQUIRED>

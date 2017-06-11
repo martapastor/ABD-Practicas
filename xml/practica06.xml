@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF−8"?>
+
+<!-- 1. Obtener todos los títulos de los libros. -->
+    for $b in doc("xquery/libros.xml")/biblioteca/libros/libro
+    return $b/titulo
+
+
+<!-- 2. Obtener todos los títulos de los libros del fichero libros.xml junto con los autores de cada libro. -->
+    for $b in doc("xquery/libros.xml")/biblioteca/libros/libro
+    return  <resultado>
+                { $b/titulo }
+                { for $a in $b/autor
+                  return    <autor>
+                                {data($a/nombre)} {data($a/apellido)}
+                            </autor>
+                }
+            </resultado>
+            <!-- Las expresiones XQuery dentro de un elemento han de estar delimitadas por llaves -->
+
+
+<!-- 3. Obtener los títulos de los libros prestados con sus autores y la fecha de inicio y devolución del préstamo, ordenados por la fecha de inicio del préstamo. -->
+    for $p in doc("xquery/libros.xml")/biblioteca/prestamos/entrada
+    order by $p/prestamo/inicio
+    return  <resultado>
+                { $p/titulo }
+                { for $b in doc("xquery/libros.xml")/biblioteca/libros/libro
+                  where $b/titulo = $p/titulo
+                  return    for $a in $b/autor
+                                return  <autor>
+                                            {data($a/nombre)} {data($a/apellido)}
+                                        </autor>
+
+                }
+                { $p/prestamo/inicio }
+                { $p/prestamo/devolucion }
+            </resultado>
+
+
+<!-- 4. Obtener los títulos de los libros almacenados en el fichero libros.xml y su primer autor. -->
+    for $b in doc("xquery/libros.xml")/biblioteca/libros/libro
+    return  <resultado>
+                { $b/titulo }
+                {   <autor>
+                        {data($b/autor/nombre)[1]} {data($b/autor/apellido)[1]}
+                    </autor>
+                }
+            </resultado>
