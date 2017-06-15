@@ -110,11 +110,139 @@ Actualizar el documento referido a la película Matrix añadiendo al array actor
 
 Actualizar el documento referido a la película Matrix añadiendo al array actores los valores Joe Pantoliano, Brad Pitt y Natalie Portman.
 
-    >
-    MAAAAAAL
+    > db.peliculas.update({"_id" : ObjectId("593dc3433a54e67513c7d6e6")}, {"$push" : {"actores" : {"$each" : ["Joe Pantoliano", "Natalie Portman"]}}})
+
+    NO ES LA FORMA MÁS CORRECTA DE HACERLO.
 
 
 Actualizar el documento de la película Matrix eliminando del array el primer y último actor.
 
-    > db.peliculas.update({"_id" : ObjectId("593dc3433a54e67513c7d6e6")}, {"$pop" : {"actores" : -1, "actores" : 1}})
-    MAAAAAAL
+    > db.peliculas.update({"_id" : ObjectId("593dc3433a54e67513c7d6e6")}, {"$pop" : {"actores" : 1}})
+
+    > db.peliculas.update({"_id" : ObjectId("593dc3433a54e67513c7d6e6")}, {"$pop" : {"actores" : -1}})
+
+    NO ES LA FORMA MÁS CORRECTA DE HACERLO.
+
+
+Actualizar el documento referido a la película "Matrix" eliminado todas las apariciones en el array "actores" de los valores "Joe Pantoliano" y "Antonio Banderas".
+
+    > db.peliculas.update({"_id" : ObjectId("593dc3433a54e67513c7d6e6")}, {"$pull" : {"actores" : {"$in" : ["Joe Pantoliano", "Antonio Banderas"]}}})
+    {
+    	"_id" : ObjectId("593dc3433a54e67513c7d6e6"),
+    	"titulo" : "Matrix",
+    	"estreno" : 1999,
+    	"actores" : [
+    		"Laurence Fishburne",
+    		"Brad Pitt"
+    	],
+    	"genero" : "ciencia ficcion",
+    	"tipo" : "DVD"
+    }
+
+
+Actualizar el documento referido al disco "Recuerdos" y añadir una nueva canción al array "canciones".
+
+    > db.createCollection("musica")
+    { "ok" : 1 }
+
+    > db.musica.insert({"album" : "Recuerdos"})
+    WriteResult({ "nInserted" : 1 })
+
+    > db.musica.findOne({"album" : "Recuerdos"})
+    { "_id" : ObjectId("593e6d90bfc43260f02308f6"), "album" : "Recuerdos" }
+
+    > db.musica.update({"album" : "Recuerdos"}, {"$push" : {"canciones" : {"cancion" : 5, "titulo" : "El atardecer", "logitud" : "6:50"}}})
+    WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+    > db.musica.findOne({"album" : "Recuerdos"})
+    {
+    	"_id" : ObjectId("593e6d90bfc43260f02308f6"),
+    	"album" : "Recuerdos",
+    	"canciones" : [
+    		{
+    			"cancion" : 5,
+    			"titulo" : "El atardecer",
+    			"longitud" : "6:50"
+    		}
+    	]
+    }
+
+
+Actualizar el documento referido al disco "Recuerdos" de manera que la canción "El atardecer" tenga asignado el número 3 en vez de 5.
+
+    > db.musica.update({"album" : "Recuerdos", "canciones" : {"$elemMatch" : {"titulo" : "El atardecer"}}}, {"$set" : {"canciones.0.cancion" : 3}})
+
+    // MUY IMPORTANTE: si queremos actualizar la info de un campo dentro de un documento embebido dentro de un array
+    // (sí, es un ejercicio un poco complejo) debemos usar un $-based-array, especialmente si la condición para modificar
+    // un campo del documento embebido en el array es una comparación con otro campo de dicho documento.
+
+    // Pero si por ejemplo queremos cambiar el título de la canción que tiene el valor del campo 'cancion' igual a 4,
+    // debemos establecer la condición con la máxima exactitud posible gracias a $elemMatch. Primero vamos a insertar
+    // una canción más en el array 'canciones' del álbum Recuerdos
+
+    > db.musica.update({"album" : "Recuerdos"}, {"$push" : {"canciones" : {"cancion" : 4, "titulo" : "Aserejé", "longitud" : "3:20"}}})
+    WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+    > db.musica.findOne({"album" : "Recuerdos"})
+    {
+    	"_id" : ObjectId("593e6d90bfc43260f02308f6"),
+    	"album" : "Recuerdos",
+    	"canciones" : [
+    		{
+    			"cancion" : 3,
+    			"titulo" : "El atardecer",
+    			"logitud" : "6:50"
+    		},
+    		{
+    			"cancion" : 4,
+    			"titulo" : "Aserejé",
+    			"longitud" : "3:20"
+    		}
+    	]
+    }
+
+    > db.musica.update({"album" : "Recuerdos", "canciones" : {"$elemMatch" : {"cancion" : 4}}}, {"$set" : {"canciones.$.titulo" : "Una vaina loca"}})
+    WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+    > db.musica.findOne({"album" : "Recuerdos"})
+    {
+    	"_id" : ObjectId("593e6d90bfc43260f02308f6"),
+    	"album" : "Recuerdos",
+    	"canciones" : [
+    		{
+    			"cancion" : 3,
+    			"titulo" : "El atardecer",
+    			"logitud" : "6:50"
+    		},
+    		{
+    			"cancion" : 4,
+    			"titulo" : "Una vaina loca",
+    			"longitud" : "3:20"
+    		}
+    	]
+    }
+
+
+----------------------------------------------------------------
+
+Comando muy útil si la lio insertando datos:
+
+    > var x = db.mycollection.findOne({"title" : "Titulo"})
+
+    > delete x.entrada
+
+    > db.mycollection.update({"title" : "Titulo"}, x);
+
+    > db.mycollection.findOne({"title" : "Titulo"})
+
+
+----------------------------------------------------------------
+
+Para eliminar una colección (equivalente a una tabla en SQL) por completo:
+
+    > db.mycollection.drop()
+
+
+Por otro lado, para eliminar todos los documentos de una colección en la que se cumpla una condición sobre un campo de dicho documento:
+
+    > db.mycollection.remove({"campo" : true})

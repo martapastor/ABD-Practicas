@@ -70,3 +70,37 @@ $   { "_id" : ObjectId("593d66fd534ece659e93a194"), "nombre" : "Eloy", "edad" : 
 
     // Tanto la instrucción OR como la instrucción IN devuelven el mismo resultado, aunque se recomienda
     // usar IN siempre que sea posible dado que es más eficiente.
+
+$   > db.usuarios.insert({"nombre" : "Nacho", "edad" : null, "direccion" : { "calle" : "General Yagüe, 10", "ciudad" : "Madrid", "pais" : "España"}})
+$   WriteResult({ "nInserted" : 1 })
+
+$   > db.usuarios.find({"edad" : null})
+$   { "_id" : ObjectId("593e5dffbfc43260f02308f4"), "nombre" : "Nacho", "edad" : null, "direccion" : { "calle" : "General Yagüe, 10", "ciudad" : "Madrid", "pais" : "España" } }
+
+$   > db.usuarios.find({"z" : null})
+$   { "_id" : ObjectId("593d66cb534ece659e93a193"), "nombre" : "Helena", "edad" : 27, "direccion" : { "calle" : "Rue del Percebe, 13", "ciudad" : "Madrid", "pais" : "España" } }
+$   { "_id" : ObjectId("593d66fd534ece659e93a194"), "nombre" : "Eloy", "edad" : 18, "direccion" : { "calle" : "Paseo Juan XXIII, 9", "ciudad" : "Madrid", "pais" : "España" } }
+$   { "_id" : ObjectId("593d68a7534ece659e93a195"), "nombre" : "Marta", "edad" : 20, "direccion" : { "calle" : "Manuela Malasaña, 4", "ciudad" : "Madrid", "pais" : "España" } }
+$   { "_id" : ObjectId("593e5dffbfc43260f02308f4"), "nombre" : "Nacho", "edad" : null, "direccion" : { "calle" : "General Yagüe, 10", "ciudad" : "Madrid", "pais" : "España" } }
+
+    // Devuelve todas las entradas donde "z" sea null, o todas aquellas que no tengan el campo "z"
+    // (y, por consiguiente, es null implícitamente)
+
+$   > db.usuarios.find({"z" : {"$in" : [null]}})
+$   { "_id" : ObjectId("593d66cb534ece659e93a193"), "nombre" : "Helena", "edad" : 27, "direccion" : { "calle" : "Rue del Percebe, 13", "ciudad" : "Madrid", "pais" : "España" } }
+$   { "_id" : ObjectId("593d66fd534ece659e93a194"), "nombre" : "Eloy", "edad" : 18, "direccion" : { "calle" : "Paseo Juan XXIII, 9", "ciudad" : "Madrid", "pais" : "España" } }
+$   { "_id" : ObjectId("593d68a7534ece659e93a195"), "nombre" : "Marta", "edad" : 20, "direccion" : { "calle" : "Manuela Malasaña, 4", "ciudad" : "Madrid", "pais" : "España" } }
+$   { "_id" : ObjectId("593e5dffbfc43260f02308f4"), "nombre" : "Nacho", "edad" : null, "direccion" : { "calle" : "General Yagüe, 10", "ciudad" : "Madrid", "pais" : "España" } }
+
+    // Se comparta de la misma manera que el caso anterior.
+
+$   > db.createCollection("comida")
+$   { "ok" : 1 }
+
+$   > db.comida.insert({"fruta" : ["manzana", "platano", "melocoton"]})
+$   WriteResult({ "nInserted" : 1 })
+
+$   > db.comida.find({"fruta" : "platano"})
+$   { "_id" : ObjectId("593e5f74bfc43260f02308f5"), "fruta" : [ "manzana", "platano", "melocoton" ] }
+
+    // Esta consulta equivale a tener un documento de la forma {"fruta" : "manzana", "fruta" : "platano", "fruta" : "melocoton"}
